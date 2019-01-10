@@ -29,6 +29,8 @@ dependencies:
   # 本地存储、收藏功能
   shared_preferences: ^0.4.3
   dio: ^1.0.6
+  random_pk: any
+  font_awesome_flutter: any
 
 dev_dependencies:
   flutter_test:

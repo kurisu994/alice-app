@@ -12,11 +12,7 @@ buildscript {
 allprojects {
     repositories {
         google()
-        mavenLocal()
         jcenter()
-        maven { url 'https://dl.bintray.com/jetbrains/anko' }
-        maven { url "https://maven.google.com" }
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
     }
 }
 
