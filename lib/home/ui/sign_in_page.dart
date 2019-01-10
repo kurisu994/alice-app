@@ -2,6 +2,7 @@ import 'package:alice/common/net_utils.dart';
 import 'package:alice/common/util.dart';
 import 'package:alice/home/model/user.dart';
 import 'package:alice/home/style/theme.dart' as theme;
+import 'package:alice/main/ui/index.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -269,13 +270,15 @@ class _SignInPageState extends State<SignInPage> {
               .showSnackBar(new SnackBar(content: new Text("执行登录操作")));
           //调用所有自孩子的save回调，保存表单内容
           _SignInFormKey.currentState.save();
-          var map = new Map<String, String>();
+          var map = new Map<String, dynamic>();
           map['userName'] = user.userName;
           map['password'] = user.passWord;
           NetUtils.post("http://192.168.0.88:8080/user/auth/login", map,
                   NetUtils.jsonParam)
               .then((value) {
-            Util.setValueToLocalstorge("token", value);
+            Util.setValueToLocalstorge("token", value["data"]);
+            Navigator.push(context,
+                new MaterialPageRoute(builder: (context) => new Main()));
           }).catchError((onError) {
             print(onError);
           });
