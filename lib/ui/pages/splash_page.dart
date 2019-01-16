@@ -179,13 +179,11 @@ class SplashPageState extends State<SplashPage> {
         },
         child: new Container(
           alignment: Alignment.center,
-          child: new CachedNetworkImage(
+          child: new Image.asset(
+            _splashModel.imgUrl,
+            fit: BoxFit.fill,
             width: double.infinity,
             height: double.infinity,
-            fit: BoxFit.fill,
-            imageUrl: _splashModel.imgUrl,
-            placeholder: _buildSplashBg(),
-            errorWidget: _buildSplashBg(),
           ),
         ),
       ),
