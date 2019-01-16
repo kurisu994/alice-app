@@ -1,34 +1,98 @@
-import 'package:alice/home/ui/index.dart';
-import 'package:alice/main/ui/index.dart';
+import 'package:alice/common/component_index.dart';
+import 'package:alice/net/net/dio_util.dart';
+import 'package:alice/ui/pages/main_page.dart';
+import 'package:alice/ui/pages/page_index.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
-void main() => runApp(MyApp());
+Future<void> main() async {
+  return runApp(BlocProvider<ApplicationBloc>(
+    bloc: ApplicationBloc(),
+    child: BlocProvider(child: MyApp(), bloc: MainBloc()),
+  ));
+}
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return MyAppState();
+  }
+}
 
-  Future<String> get() async {
-    String token;
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString("token");
-    return token;
+class MyAppState extends State<MyApp> {
+  Locale _locale;
+  Color _themeColor = ColorT.app_main;
+
+  @override
+  void initState() {
+    super.initState();
+    setLocalizedValues(localizedValues);
+    _init();
+    _initAsync();
+    _initListener();
+  }
+
+  void _init() {
+//    DioUtil.openDebug();
+    Options options = DioUtil.getDefOptions();
+    options.baseUrl = Constant.SERVER_ADDRESS;
+    HttpConfig config = new HttpConfig(options: options);
+    DioUtil().setConfig(config);
+  }
+
+  void _initAsync() async {
+    await SpUtil.getInstance();
+    if (!mounted) return;
+    _loadLocale();
+  }
+
+  void _initListener() {
+    final ApplicationBloc bloc = BlocProvider.of<ApplicationBloc>(context);
+    bloc.appEventStream.listen((value) {
+      _loadLocale();
+    });
+  }
+
+  void _loadLocale() {
+    setState(() {
+      LanguageModel model = SpHelper.getLanguageModel();
+      if (model != null) {
+        _locale = new Locale(model.languageCode, model.countryCode);
+      } else {
+        _locale = null;
+      }
+
+      String _colorKey = SpHelper.getThemeColor();
+      if (themeColorMap[_colorKey] != null)
+        _themeColor = themeColorMap[_colorKey];
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    get().then((String token) {
-      if (token != null && token != "") {
-        return new Main();
-      } else {
-        return new HomePage();
-      }
-    });
-    return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: new HomePage()
+    return new MaterialApp(
+      routes: {
+        '/MainPage': (ctx) => MainPage(),
+      },
+      home: new SplashPage(),
+      theme: ThemeData.light().copyWith(
+        primaryColor: _themeColor,
+        accentColor: _themeColor,
+        indicatorColor: Colors.white,
+      ),
+      locale: _locale,
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        CustomLocalizations.delegate
+      ],
+      supportedLocales: CustomLocalizations.supportedLocales,
     );
   }
 }
