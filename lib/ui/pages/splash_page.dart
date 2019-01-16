@@ -52,7 +52,6 @@ class SplashPageState extends State<SplashPage> {
 
   void _initAsync() {
     Observable.just(1).delay(new Duration(milliseconds: 1000)).listen((_) {
-//      SpUtil.putBool(Constant.KEY_GUIDE, false);
       if (SpUtil.getBool(Constant.KEY_GUIDE) != true &&
           ObjectUtil.isNotEmpty(_guideList)) {
         SpUtil.putBool(Constant.KEY_GUIDE, true);
@@ -144,7 +143,14 @@ class SplashPageState extends State<SplashPage> {
   }
 
   void _goMain() {
-    Navigator.of(context).pushReplacementNamed('/MainPage');
+    var token = SpUtil.getString("token");
+    if (StringUtils.isValid(token)) {
+      //TODO 跳转到首页
+      Navigator.of(context).pushReplacementNamed('/MainPage');
+    } else {
+      //TODO 跳转到登录页
+      Navigator.of(context).pushReplacementNamed('/MainPage');
+    }
   }
 
   Widget _buildSplashBg() {
@@ -241,6 +247,8 @@ class SplashPageState extends State<SplashPage> {
   @override
   void dispose() {
     super.dispose();
-    if (_timerUtil != null) _timerUtil.cancel(); //记得中dispose里面把timer cancel。
+
+    ///清除timer。
+    if (_timerUtil != null) _timerUtil.cancel();
   }
 }
