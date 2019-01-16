@@ -51,10 +51,6 @@ class WebScaffoldState extends State<WebScaffold> {
         ),
         centerTitle: true,
         actions: <Widget>[
-          LikeButton(
-            width: 56.0,
-            duration: Duration(milliseconds: 500),
-          ),
 //          new IconButton(icon: new Icon(Icons.more_vert), onPressed: () {}),
           new PopupMenuButton(
               padding: const EdgeInsets.all(0.0),

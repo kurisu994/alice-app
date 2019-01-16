@@ -1,4 +1,4 @@
-import 'package:alice/resources/res_index.dart';
+import 'package:alice/common/component_index.dart';
 import 'package:flutter/widgets.dart';
 
 class TextStyles {

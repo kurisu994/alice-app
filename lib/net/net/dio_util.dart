@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:alice/utils/util_index.dart';
 import 'package:dio/dio.dart';
 
 /// <BaseResp<T> 返回 status code msg data.
@@ -35,11 +36,13 @@ class Method {
 }
 
 /// 单例 DioUtil.
-/// debug模式下可以打印请求日志. DioUtil.openDebug().
-/// dio详细使用请查看dio官网(https://github.com/flutterchina/dio).
 class DioUtil {
   static final DioUtil _singleton = DioUtil._init();
   static Dio _dio;
+
+  static final ContentType paramString = ContentType.parse(
+      "application/x-www-form-urlencoded");
+  static final ContentType jsonString = ContentType.json;
 
   Options _options = getDefOptions();
 
@@ -63,81 +66,40 @@ class DioUtil {
     _isDebug = true;
   }
 
-  /// set Config.
-  void setConfig(HttpConfig config) {
-    _statusKey = config.status ?? _statusKey;
-    _codeKey = config.code ?? _codeKey;
-    _msgKey = config.msg ?? _msgKey;
-    _dataKey = config.data ?? _dataKey;
-    _mergeOption(config.options);
-    _pem = config.pem ?? _pem;
-    if (_dio != null) {
-      _dio.options = _options;
-      if (_pem != null) {
-        _dio.onHttpClientCreate = (HttpClient client) {
-          client.badCertificateCallback =
-              (X509Certificate cert, String host, int port) {
-            if (cert.pem == _pem) {
-              // 证书一致，则放行
-              return true;
-            }
-            return false;
-          };
-        };
-      }
-      if (_pKCSPath != null) {
-        _dio.onHttpClientCreate = (HttpClient client) {
-          SecurityContext sc = new SecurityContext();
-          //file为证书路径
-          sc.setTrustedCertificates(_pKCSPath, password: _pKCSPwd);
-          HttpClient httpClient = new HttpClient(context: sc);
-          return httpClient;
-        };
-      }
-    }
-  }
-
-  /// Make http request with options.
-  /// [method] The request method.
-  /// [path] The url path.
-  /// [data] The request data
-  /// [options] The request options.
-  /// <BaseResp<T> 返回 status code msg data .
-  Future<BaseResp<T>> request<T>(String method, String path,
-      {data, Options options, CancelToken cancelToken}) async {
-    Response response = await _dio.request(path,
-        data: data,
-        options: _checkOptions(method, options),
-        cancelToken: cancelToken);
+  ///get请求
+  Future<BaseResp<T>> getRequest<T>(String path,
+      {responseType: ResponseType.JSON, data}) async {
+    String token = SpUtil.getString("token");
+    Map<String, dynamic> map = new Map.identity();
+    map['Authorization'] = token;
+    Options option = this._mergeOption(
+        Method.get, ContentType.json, responseType, map);
+    Response response = await _dio.request(path, data: data, options: option);
     _printHttpLog(response);
-    String _status;
+    bool _success;
     int _code;
-    String _msg;
+    String _result;
     T _data;
     if (response.statusCode == HttpStatus.ok ||
         response.statusCode == HttpStatus.created) {
       try {
         if (response.data is Map) {
-          _status = (response.data[_statusKey] is int)
-              ? response.data[_statusKey].toString()
-              : response.data[_statusKey];
-          _code = (response.data[_codeKey] is String)
-              ? int.tryParse(response.data[_codeKey])
-              : response.data[_codeKey];
-          _msg = response.data[_msgKey];
-          _data = response.data[_dataKey];
+          _success = response.data['success'];
+          _code = (response.data['code'] is String)
+              ? int.tryParse(response.data['code'])
+              : response.data['code'];
+          _result = response.data['result'];
+          _data = response.data['data'];
         } else {
           Map<String, dynamic> _dataMap = _decodeData(response);
-          _status = (_dataMap[_statusKey] is int)
-              ? _dataMap[_statusKey].toString()
-              : _dataMap[_statusKey];
-          _code = (_dataMap[_codeKey] is String)
-              ? int.tryParse(_dataMap[_codeKey])
-              : _dataMap[_codeKey];
-          _msg = _dataMap[_msgKey];
-          _data = _dataMap[_dataKey];
+          _success = _dataMap['success'];
+          _code = (_dataMap['code'] is String)
+              ? int.tryParse(_dataMap['code'])
+              : _dataMap['code'];
+          _result = _dataMap['result'];
+          _data = _dataMap['data'];
         }
-        return new BaseResp(_status, _code, _msg, _data);
+        return new BaseResp(_success, _code, _result, _data);
       } catch (e) {
         return new Future.error(new DioError(
           response: response,
@@ -153,47 +115,40 @@ class DioUtil {
     ));
   }
 
-  /// Make http request with options.
-  /// [method] The request method.
-  /// [path] The url path.
-  /// [data] The request data
-  /// [options] The request options.
-  /// <BaseRespR<T> 返回 status code msg data  Response.
-  Future<BaseRespR<T>> requestR<T>(String method, String path,
-      {data, Options options, CancelToken cancelToken}) async {
-    Response response = await _dio.request(path,
-        data: data,
-        options: _checkOptions(method, options),
-        cancelToken: cancelToken);
+  ///post请求
+  Future<BaseResp<T>> postRequest<T>(String path,
+      {contentType, responseType: ResponseType.JSON, data}) async {
+    String token = SpUtil.getString("token");
+    Map<String, dynamic> map = new Map.identity();
+    map['Authorization'] = token;
+    Options option = this._mergeOption(
+        Method.post, contentType, responseType, map);
+    Response response = await _dio.request(path, data: data, options: option);
     _printHttpLog(response);
-    String _status;
+    bool _success;
     int _code;
-    String _msg;
+    String _result;
     T _data;
     if (response.statusCode == HttpStatus.ok ||
         response.statusCode == HttpStatus.created) {
       try {
         if (response.data is Map) {
-          _status = (response.data[_statusKey] is int)
-              ? response.data[_statusKey].toString()
-              : response.data[_statusKey];
-          _code = (response.data[_codeKey] is String)
-              ? int.tryParse(response.data[_codeKey])
-              : response.data[_codeKey];
-          _msg = response.data[_msgKey];
-          _data = response.data[_dataKey];
+          _success = response.data['success'];
+          _code = (response.data['code'] is String)
+              ? int.tryParse(response.data['code'])
+              : response.data['code'];
+          _result = response.data['result'];
+          _data = response.data['data'];
         } else {
           Map<String, dynamic> _dataMap = _decodeData(response);
-          _status = (_dataMap[_statusKey] is int)
-              ? _dataMap[_statusKey].toString()
-              : _dataMap[_statusKey];
-          _code = (_dataMap[_codeKey] is String)
-              ? int.tryParse(_dataMap[_codeKey])
-              : _dataMap[_codeKey];
-          _msg = _dataMap[_msgKey];
-          _data = _dataMap[_dataKey];
+          _success = _dataMap['success'];
+          _code = (_dataMap['code'] is String)
+              ? int.tryParse(_dataMap['code'])
+              : _dataMap['code'];
+          _result = _dataMap['result'];
+          _data = _dataMap['data'];
         }
-        return new BaseRespR(_status, _code, _msg, _data, response);
+        return new BaseResp(_success, _code, _result, _data);
       } catch (e) {
         return new Future.error(new DioError(
           response: response,
@@ -209,24 +164,7 @@ class DioUtil {
     ));
   }
 
-  /// Download the file and save it in local. The default http method is "GET",you can custom it by [Options.method].
-  /// [urlPath]: The file url.
-  /// [savePath]: The path to save the downloading file later.
-  /// [onProgress]: The callback to listen downloading progress.please refer to [OnDownloadProgress].
-  Future<Response> download(
-    String urlPath,
-    savePath, {
-    OnDownloadProgress onProgress,
-    CancelToken cancelToken,
-    data,
-    Options options,
-  }) {
-    return _dio.download(urlPath, savePath,
-        onProgress: onProgress,
-        cancelToken: cancelToken,
-        data: data,
-        options: options);
-  }
+
 
   /// decode response data.
   Map<String, dynamic> _decodeData(Response response) {
@@ -238,29 +176,18 @@ class DioUtil {
     return json.decode(response.data.toString());
   }
 
-  /// check Options.
-  Options _checkOptions(method, options) {
-    if (options == null) {
-      options = new Options();
-    }
-    options.method = method;
-    return options;
-  }
 
-  /// merge Option.
-  void _mergeOption(
-    String method,
+  Options _mergeOption(String method, ContentType contentType,
+      ResponseType responseType, Map<String, dynamic> headers
   ) {
+    _options.headers = (new Map.from(_options.headers))
+      ..addAll(headers);
     _options.method = method ?? _options.method;
-    _options.headers = (new Map.from(_options.headers))..addAll(opt.headers);
-    _options.receiveTimeout = opt.receiveTimeout ?? _options.receiveTimeout;
-    _options.responseType = opt.responseType ?? _options.responseType;
-    _options.contentType = opt.contentType ?? _options.contentType;
-    _options.validateStatus = opt.validateStatus ?? _options.validateStatus;
-    _options.followRedirects = opt.followRedirects ?? _options.followRedirects;
+    _options.responseType = responseType ?? _options.responseType;
+    _options.contentType = contentType ?? _options.contentType;
+    return _options;
   }
 
-  /// print Http Log.
   void _printHttpLog(Response response) {
     if (!_isDebug) {
       return;
@@ -288,7 +215,6 @@ class DioUtil {
         request.path;
   }
 
-  /// print Data Str.
   void _printDataStr(String tag, Object value) {
     String da = value.toString();
     while (da.isNotEmpty) {
@@ -302,23 +228,19 @@ class DioUtil {
     }
   }
 
-  /// get dio.
   Dio getDio() {
     return _dio;
   }
 
-  /// create new dio.
   static Dio createNewDio([Options options]) {
     options = options ?? getDefOptions();
     Dio dio = new Dio(options);
     return dio;
   }
 
-  /// get Def Options.
   static Options getDefOptions() {
     Options options = new Options();
-    options.contentType =
-        ContentType.parse("application/x-www-form-urlencoded");
+    options.contentType = ContentType.json;
     options.connectTimeout = 1000 * 10;
     options.receiveTimeout = 1000 * 20;
     options.responseType = ResponseType.JSON;

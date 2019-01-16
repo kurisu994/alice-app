@@ -36,16 +36,16 @@ class SplashPageState extends State<SplashPage> {
     HttpUtils httpUtil = new HttpUtils();
     httpUtil.getSplash().then((model) async {
       await SpUtil.getInstance();
-      _splashModel = SpHelper.getSplashModel();
+      _splashModel = Utils.getSplashModel();
       if (!ObjectUtil.isEmpty(model.imgUrl)) {
         if (_splashModel == null || (_splashModel.imgUrl != model.imgUrl)) {
-          SpHelper.putObject(Constant.KEY_SPLASH_MODEL, model);
+          Utils.putObject(Constant.KEY_SPLASH_MODEL, model);
           setState(() {
             _splashModel = model;
           });
         }
       } else {
-        SpHelper.putObject(Constant.KEY_SPLASH_MODEL, null);
+        Utils.putObject(Constant.KEY_SPLASH_MODEL, null);
       }
     });
   }
@@ -118,7 +118,7 @@ class SplashPageState extends State<SplashPage> {
   }
 
   void _initSplash() {
-    _splashModel = SpHelper.getSplashModel();
+    _splashModel = Utils.getSplashModel();
     if (_splashModel == null) {
       _goMain();
     } else {

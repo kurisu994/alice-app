@@ -3,10 +3,6 @@ class Constant {
 
   static const int STATUS_SUCCESS = 0;
 
-  static const String SERVER_ADDRESS = WAN_ANDROID;
-
-  static const String WAN_ANDROID = "http://www.wanandroid.com/";
-
   static const int TYPE_SYS_UPDATE = 1;
   static const String KEY_THEME_COLOR = 'key_theme_color';
   static const String KEY_GUIDE = 'key_guide';

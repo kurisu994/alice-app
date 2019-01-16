@@ -1,5 +1,5 @@
 import 'package:alice/common/component_index.dart';
-import 'package:alice/ui/pages/page_index.dart';
+import 'package:alice/ui/pages/demos/main_demos.dart';
 import 'package:flutter/material.dart';
 
 class MainLeftPage extends StatefulWidget {
@@ -24,11 +24,8 @@ class _MainLeftPageState extends State<MainLeftPage> {
   @override
   void initState() {
     super.initState();
-    _pageInfo.add(
-        PageInfo(Ids.titleCollection, Icons.collections, CollectionPage()));
-    _pageInfo.add(PageInfo(Ids.titleSetting, Icons.settings, SettingPage()));
-    _pageInfo.add(PageInfo(Ids.titleAbout, Icons.info, AboutPage()));
-    _pageInfo.add(PageInfo(Ids.titleShare, Icons.share, SharePage()));
+    _pageInfo.add(PageInfo(Ids.titleSetting, Icons.settings, null));
+    _pageInfo.add(PageInfo(Ids.titleAbout, Icons.info, null));
     _pageInfo.add(PageInfo(Ids.titleSignOut, Icons.power_settings_new, null));
   }
 

@@ -41,7 +41,6 @@ class AuthorPage extends StatelessWidget {
                 decoration: Decorations.bottom,
               );
             }
-            return new ComArrowItem(model);
           }),
     );
   }

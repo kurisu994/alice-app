@@ -1,16 +1,11 @@
 import 'package:alice/common/component_index.dart';
-import 'package:alice/net/net/dio_util.dart';
 import 'package:alice/ui/pages/main_page.dart';
-import 'package:alice/ui/pages/page_index.dart';
-import 'package:dio/dio.dart';
+import 'package:alice/ui/pages/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-Future<void> main() async {
-  return runApp(BlocProvider<ApplicationBloc>(
-    bloc: ApplicationBloc(),
-    child: BlocProvider(child: MyApp(), bloc: MainBloc()),
-  ));
+void main() async {
+  runApp(new MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -28,18 +23,9 @@ class MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     setLocalizedValues(localizedValues);
-    _init();
     _initAsync();
-    _initListener();
   }
 
-  void _init() {
-//    DioUtil.openDebug();
-    Options options = DioUtil.getDefOptions();
-    options.baseUrl = Constant.SERVER_ADDRESS;
-    HttpConfig config = new HttpConfig(options: options);
-    DioUtil().setConfig(config);
-  }
 
   void _initAsync() async {
     await SpUtil.getInstance();
@@ -47,23 +33,17 @@ class MyAppState extends State<MyApp> {
     _loadLocale();
   }
 
-  void _initListener() {
-    final ApplicationBloc bloc = BlocProvider.of<ApplicationBloc>(context);
-    bloc.appEventStream.listen((value) {
-      _loadLocale();
-    });
-  }
 
   void _loadLocale() {
     setState(() {
-      LanguageModel model = SpHelper.getLanguageModel();
+      LanguageModel model = Utils.getLanguageModel();
       if (model != null) {
         _locale = new Locale(model.languageCode, model.countryCode);
       } else {
         _locale = null;
       }
 
-      String _colorKey = SpHelper.getThemeColor();
+      String _colorKey = Utils.getThemeColor();
       if (themeColorMap[_colorKey] != null)
         _themeColor = themeColorMap[_colorKey];
     });

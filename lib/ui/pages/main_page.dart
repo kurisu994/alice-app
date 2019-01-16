@@ -1,6 +1,5 @@
 import 'package:alice/common/component_index.dart';
 import 'package:alice/ui/pages/main_left_page.dart';
-import 'package:alice/ui/pages/page_index.dart';
 import 'package:flutter/material.dart';
 
 class _Page {
@@ -40,10 +39,7 @@ class MainPage extends StatelessWidget {
               new IconButton(
                   icon: new Icon(Icons.search),
                   onPressed: () {
-                    NavigatorUtil.pushPage(context, new SearchPage(),
-                        pageName: "SearchPage");
                     // NavigatorUtil.pushPage(context,  new TestPage());
-                    //  NavigatorUtil.pushPage(context,  new DemoApp());
                   })
             ],
           ),
@@ -72,24 +68,7 @@ class TabLayout extends StatelessWidget {
 
 class TabBarViewLayout extends StatelessWidget {
   Widget buildTabView(BuildContext context, _Page page) {
-    String labelId = page.labelId;
-    switch (labelId) {
-      case Ids.titleHome:
-        return HomePage(labelId: labelId);
-        break;
-      case Ids.titleRepos:
-        return ReposPage(labelId: labelId);
-        break;
-      case Ids.titleEvents:
-        return EventsPage(labelId: labelId);
-        break;
-      case Ids.titleSystem:
-        return SystemPage(labelId: labelId);
-        break;
-      default:
-        return Container();
-        break;
-    }
+    return Container();
   }
 
   @override

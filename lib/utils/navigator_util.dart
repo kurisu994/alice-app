@@ -1,6 +1,5 @@
 import 'package:alice/common/component_index.dart';
-import 'package:alice/net/protocol/models.dart';
-import 'package:alice/ui/pages/tab_page.dart';
+import 'package:alice/ui/widgets/web_scaffold.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -26,23 +25,6 @@ class NavigatorUtil {
                     url: url,
                   )));
     }
-  }
-
-  static void pushTabPage(BuildContext context,
-      {String labelId, String title, String titleId, TreeModel treeModel}) {
-    if (context == null) return;
-    Navigator.push(
-        context,
-        new CupertinoPageRoute<void>(
-            builder: (ctx) => new BlocProvider<TabBloc>(
-                  child: new TabPage(
-                    labelId: labelId,
-                    title: title,
-                    titleId: titleId,
-                    treeModel: treeModel,
-                  ),
-                  bloc: new TabBloc(),
-                )));
   }
 
   static Future<Null> launchInBrowser(String url, {String title}) async {
