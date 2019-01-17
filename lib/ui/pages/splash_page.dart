@@ -178,12 +178,10 @@ class SplashPageState extends State<SplashPage> {
               title: _splashModel.title, url: _splashModel.url);
         },
         child: new Container(
-          alignment: Alignment.center,
-          child: new Image.asset(
-            _splashModel.imgUrl,
-            fit: BoxFit.fill,
-            width: double.infinity,
-            height: double.infinity,
+          alignment: Alignment.topLeft,
+          child: new Image.asset(Utils.getImgPath('splash', format: 'jpg'),
+            fit: BoxFit.none,
+            height: double.nan,
           ),
         ),
       ),
