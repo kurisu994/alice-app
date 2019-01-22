@@ -1,82 +1,19 @@
-import 'package:alice/common/component_index.dart';
-import 'package:alice/ui/pages/main_left_page.dart';
 import 'package:flutter/material.dart';
 
-class _Page {
-  final String labelId;
-
-  _Page(this.labelId);
-}
-
-final List<_Page> _allPages = <_Page>[
-  new _Page(Ids.titleHome),
-  new _Page(Ids.titleRepos),
-  new _Page(Ids.titleEvents),
-  new _Page(Ids.titleSystem),
-];
 
 class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    LogUtil.e("MainPagess build......");
-    return new DefaultTabController(
-        length: _allPages.length,
-        child: new Scaffold(
-          appBar: new MyAppBar(
-            leading: new Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: AssetImage(
-                    Utils.getImgPath('ali_connors'),
-                  ),
-                ),
-              ),
-            ),
-            centerTitle: true,
-            title: new TabLayout(),
-            actions: <Widget>[
-              new IconButton(
-                  icon: new Icon(Icons.search),
-                  onPressed: () {
-                    // NavigatorUtil.pushPage(context,  new TestPage());
-                  })
-            ],
-          ),
-          body: new TabBarViewLayout(),
-          drawer: new Drawer(
-            child: new MainLeftPage(),
-          ),
-        ));
-  }
-}
-
-class TabLayout extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return new TabBar(
-      isScrollable: true,
-      labelPadding: EdgeInsets.all(12.0),
-      indicatorSize: TabBarIndicatorSize.label,
-      tabs: _allPages
-          .map((_Page page) =>
-              new Tab(text: IntlUtil.getString(context, page.labelId)))
-          .toList(),
+    return new MaterialApp(
+      title: 'Welcome to Flutter',
+      home: new Scaffold(
+        appBar: new AppBar(
+          title: new Text('Welcome to Flutter'),
+        ),
+        body: new Center(
+          child: new Text('Hello World'),
+        ),
+      ),
     );
-  }
-}
-
-class TabBarViewLayout extends StatelessWidget {
-  Widget buildTabView(BuildContext context, _Page page) {
-    return Container();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    LogUtil.e("TabBarViewLayout build.......");
-    return new TabBarView(
-        children: _allPages.map((_Page page) {
-      return buildTabView(context, page);
-    }).toList());
   }
 }
