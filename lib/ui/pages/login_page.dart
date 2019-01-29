@@ -1,3 +1,7 @@
+import 'package:alice/common/component_index.dart';
+import 'package:alice/net/api/api.dart';
+import 'package:alice/net/net/dio_util.dart';
+import 'package:alice/ui/pages/index.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
@@ -25,13 +29,15 @@ class LoginPage extends StatelessWidget {
                     .of(context)
                     .size
                     .width,
-                decoration: new BoxDecoration(
-                    gradient: new LinearGradient(
-                      colors: const [Color(0xFFfbab66), Color(0xFFf7418c)],
-                      stops: const [0.0, 1.0],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    )),
+
+                ///背景色渐变
+//                decoration: new BoxDecoration(
+//                    gradient: new LinearGradient(
+//                      colors: const [Color(0xFF84b3ff), Color(0xFF518fff)],
+//                      stops: const [0.0, 1.0],
+//                      begin: Alignment.topCenter,
+//                      end: Alignment.bottomCenter,
+//                    )),
                 child: new LoginHomePage(),
               ),
             ),
@@ -47,12 +53,60 @@ class LoginHomePage extends StatefulWidget {
 
 class LoginHomePageState extends State<LoginHomePage> {
   final _formKey = GlobalKey<FormState>();
-  final _userNameTextController = TextEditingController();
-  final _passwordTextController = TextEditingController();
+  final _userNameController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _showLoading = false;
-  bool showPassword = true;
+  bool showPassword = false;
+  final _dio = DioUtil.getInstance();
 
-  void _submit() {}
+  void _submit() {
+    this.setState(() {
+      _showLoading = true;
+    });
+    if (_formKey.currentState.validate()) {
+      //如果输入都检验通过，则进行登录操作
+      Scaffold.of(context).showSnackBar(
+        new SnackBar(content: new Text("执行登录操作")),
+      );
+      Map<String, dynamic> map = new Map.identity();
+      map['userName'] = _userNameController.text;
+      map['password'] = _passwordController.text;
+      _dio.postRequest(
+          ApiUtil.getPath(ApiUtil.USER_LOGIN), contentType: DioUtil.paramString,
+          data: map)
+          .then((data) {
+        if (data.success) {
+          SpUtil.putString("token", data.data);
+          Navigator.push(
+              context, new MaterialPageRoute(builder: (BuildContext context) {
+            return new IndexPage();
+          }));
+        } else {
+          showDialog(context: context,
+              barrierDismissible: false,
+              builder: (BuildContext context) {
+                return new SingleChildScrollView(
+                  child: AlertDialog(
+                    title: Text('错误'),
+                    content: Text(data.result),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text('关闭'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              });
+        }
+      });
+    }
+    this.setState(() {
+      _showLoading = false;
+    });
+  }
 
   void _showPassword() {
     setState(() {
@@ -90,7 +144,8 @@ class LoginHomePageState extends State<LoginHomePage> {
                           return '请输入用户名';
                         }
                       },
-                      controller: _userNameTextController,
+                      onSaved: (value) {},
+                      controller: _userNameController,
                     ),
                   ),
                 ),
@@ -103,7 +158,7 @@ class LoginHomePageState extends State<LoginHomePage> {
                           icon: new Icon(Icons.lock),
                           suffixIcon: new IconButton(
                             icon: new Icon(Icons.remove_red_eye,
-                                color: Colors.black),
+                                color: Colors.grey),
                             onPressed: _showPassword,
                           )),
                       validator: (value) {
@@ -111,7 +166,8 @@ class LoginHomePageState extends State<LoginHomePage> {
                           return '请输入密码';
                         }
                       },
-                      controller: _passwordTextController,
+                      onSaved: (value) {},
+                      controller: _passwordController,
                       obscureText: !showPassword,
                     ),
                   ),
@@ -123,7 +179,7 @@ class LoginHomePageState extends State<LoginHomePage> {
                   width: double.infinity,
                   height: 50.0,
                   child: RaisedButton(
-                    onPressed: _submit,
+                    onPressed: _showLoading ? null : _submit,
                     splashColor: Colors.orangeAccent,
                     child: Text(
                       '登录',

@@ -1,4 +1,5 @@
 import 'package:alice/common/component_index.dart';
+import 'package:alice/ui/pages/index.dart';
 import 'package:alice/ui/pages/login_page.dart';
 import 'package:alice/ui/pages/splash_page.dart';
 import 'package:flutter/material.dart';
@@ -57,6 +58,7 @@ class MyAppState extends State<MyApp> {
     return new MaterialApp(
       routes: {
         '/LoginPage': (ctx) => LoginPage(),
+        '/IndexPage': (ctx) => IndexPage(),
       },
       home: new SplashPage(),
       theme: ThemeData.light().copyWith(
