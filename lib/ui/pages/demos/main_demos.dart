@@ -24,7 +24,6 @@ class MainDemosPageState extends State<MainDemosPage> {
     super.initState();
     mItemList.add(new ItemModel("我的Flutter开源库集合", null));
     mItemList.add(new ItemModel("汉字转拼音", new PinyinPage("汉字转拼音")));
-    mItemList.add(new ItemModel("城市列表", new CitySelectPage("City Select")));
     mItemList.add(new ItemModel("Date Util", new DatePage("Date Util")));
     mItemList.add(new ItemModel("Regex Util", new RegexUtilPage("Regex Util")));
     mItemList.add(new ItemModel("Widget Util", new WidgetPage("Widget Util")));

@@ -1,5 +1,5 @@
 import 'package:alice/common/component_index.dart';
-import 'package:alice/ui/pages/main_page.dart';
+import 'package:alice/ui/pages/login_page.dart';
 import 'package:alice/ui/pages/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -26,13 +26,11 @@ class MyAppState extends State<MyApp> {
     _initAsync();
   }
 
-
   void _initAsync() async {
     await SpUtil.getInstance();
     if (!mounted) return;
     _loadLocale();
   }
-
 
   void _loadLocale() {
     setState(() {
@@ -58,7 +56,7 @@ class MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return new MaterialApp(
       routes: {
-        '/MainPage': (ctx) => MainPage(),
+        '/LoginPage': (ctx) => LoginPage(),
       },
       home: new SplashPage(),
       theme: ThemeData.light().copyWith(

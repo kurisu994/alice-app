@@ -146,10 +146,10 @@ class SplashPageState extends State<SplashPage> {
     var token = SpUtil.getString("token");
     if (StringUtils.isValid(token)) {
       //TODO 跳转到首页
-      Navigator.of(context).pushReplacementNamed('/MainPage');
+      Navigator.of(context).pushReplacementNamed('/LoginPage');
     } else {
       //TODO 跳转到登录页
-      Navigator.of(context).pushReplacementNamed('/MainPage');
+      Navigator.of(context).pushReplacementNamed('/LoginPage');
     }
   }
 
