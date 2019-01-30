@@ -17,7 +17,6 @@ class LoginPage extends StatelessWidget {
             title: Text('登录页'),
           ),
           body: new SafeArea(
-
             ///解决键盘弹出遮挡输入框的解决方案
             child: new SingleChildScrollView(
               child: new Container(
