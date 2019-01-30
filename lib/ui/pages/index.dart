@@ -95,7 +95,8 @@ class _AccountListState extends State<AccountList> {
                   return _buildProgressIndicator();
                 } else {
                   return ListTile(
-                    title: new Text("${items[index].account}"),
+                    title: new Text(
+                        "${items[index].account}(${items[index].remark})"),
                     subtitle: new Text("${items[index].cipherCode}"),
                   );
                 }
