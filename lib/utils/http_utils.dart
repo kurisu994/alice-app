@@ -9,7 +9,7 @@ class HttpUtils {
         title: '启动页',
         content: '这是一个启动页',
         url: 'https://github.com/kurisu994/alice-app',
-        imgUrl: 'assets/images/splash.jpeg',
+        imgUrl: 'assets/images/splash.png',
       );
     });
   }

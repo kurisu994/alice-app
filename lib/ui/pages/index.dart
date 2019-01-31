@@ -96,7 +96,7 @@ class _AccountListState extends State<AccountList> {
                 } else {
                   return ListTile(
                     title: new Text(
-                        "${items[index].account}(${items[index].remark})"),
+                        "${items[index].account}(${items[index].name})"),
                     subtitle: new Text("${items[index].cipherCode}"),
                   );
                 }

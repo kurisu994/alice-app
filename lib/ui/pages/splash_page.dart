@@ -83,13 +83,13 @@ class SplashPageState extends State<SplashPage> {
             new Align(
               alignment: Alignment.bottomCenter,
               child: new Container(
-                margin: EdgeInsets.only(bottom: 160.0),
+                margin: EdgeInsets.only(bottom: 80.0),
                 child: new InkWell(
                   onTap: () {
                     _goMain();
                   },
                   child: new CircleAvatar(
-                    radius: 48.0,
+                    radius: 50.0,
                     backgroundColor: Colors.indigoAccent,
                     child: new Padding(
                       padding: EdgeInsets.all(2.0),
@@ -145,10 +145,10 @@ class SplashPageState extends State<SplashPage> {
   void _goMain() {
     var token = SpUtil.getString("token");
     if (StringUtils.isValid(token)) {
-      //TODO 跳转到首页
+      /// 跳转到首页
       Navigator.of(context).pushReplacementNamed('/IndexPage');
     } else {
-      //TODO 跳转到登录页
+      /// 跳转到登录页
       Navigator.of(context).pushReplacementNamed('/LoginPage');
     }
   }
@@ -179,9 +179,10 @@ class SplashPageState extends State<SplashPage> {
         },
         child: new Container(
           alignment: Alignment.topLeft,
-          child: new Image.asset(Utils.getImgPath('splash', format: 'jpg'),
-            fit: BoxFit.none,
-            height: double.nan,
+          child: new Image.asset(Utils.getImgPath('splash', format: 'png'),
+            width: double.infinity,
+            fit: BoxFit.fill,
+            height: double.infinity,
           ),
         ),
       ),

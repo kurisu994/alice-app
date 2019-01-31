@@ -1,7 +1,7 @@
 import 'package:alice/utils/util_index.dart';
 
 class ApiUtil {
-  static const String _HOST = "http://47.89.255.19:8008";
+  static const String _HOST = "https://wapp.kurisu.top";
 
   static const String USER_REGISTER = "user/auth/register"; //注册
   static const String USER_LOGIN = "user/auth/login"; //登录
